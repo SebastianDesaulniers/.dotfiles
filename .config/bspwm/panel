@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+
+readonly DELAY=0.6
+source ~/.config/globals
+
+panel_datetime() {
+    local time=$(date '+%R:%S')
+    local date=$(date '+%D')
+	printf "%%{F#33AA88}%s %s" "$date" "$time"
+}
+
+panel_volume() {
+    local volume=$(amixer get Master | awk -F'[][]' '/Mono:/{print $2}')
+    printf "%s" "$volume"
+}
+
+panel_power() {
+    if [ "$1" = "battery" ]; then
+        local bat_path=/sys/class/power_supply/BAT0/
+    
+        local bat_perc=$(<$bat_path/capacity)
+        local bat_status=$(<$bat_path/status)
+
+        case "$bat_status" in
+            "Charging") printf "$bat_perc+";;
+            "Discharging") printf "$bat_perc-";;
+            *) printf "$bat_perc";;
+        esac
+    elif [ "$1" = "brightness" ]; then
+      	brightness=$(xbacklight -get)
+    	printf "%0.0f" "$brightness"
+    fi
+}
+
+panel_spotify() {
+    local res=$(sp)
+    if [ "$res" = "Error: Spotify is not running." ]; then 
+        return
+    else
+        eval $(sp eval)
+    	if [[ -n $SPOTIFY_TITLE ]]; then 
+    		printf "%s" "$SPOTIFY_TITLE - $SPOTIFY_ARTIST"
+    	fi
+    fi
+}
+
+panel_cpu_temperature()
+{
+	local cpu_temp=$(</sys/class/thermal/thermal_zone0/temp)
+	printf "%0.1f C°" "$(( $cpu_temp / 1000 ))"
+}
+
+panel_ram()
+{
+	local used_memory=$(free | awk 'FNR == 2{print $3/1024/1024}')
+	printf "%%{F#A86777} %0.1f GiB" "$used_memory"
+}
+
+panel_disk()
+{
+    local disk_space=$(df -hl | awk '/p6/{print $4')
+    printf $disk_space
+}
+
+panel_current_window()
+{
+    local current_window=$(xdotool getwindowfocus getwindowname)
+	printf "%s" "$current_window"
+}
+
+panel_current_desktop()
+{
+    local current_desktop=$(xdotool get_desktop)
+    printf "%s" "${workspaces[$current_desktop]}"
+}
+
+while true; do
+    echo "%{F#9339F3} $(panel_volume) %{F#18C300}$(panel_power battery) %{F#FF0} $(panel_power brightness) %{F#F86737} $(panel_cpu_temperature) $(panel_ram) %{F#88FA88} %{c} $(panel_spotify) %{r} %{F#3FF3AA} $(panel_current_window) %{F#F2A34F} $(panel_datetime) %{F#9FEEEA} $(panel_current_desktop) %{F-}"
+	sleep $DELAY
+done &
+
+

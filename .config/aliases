@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+alias vim=nvim
+alias ls="ls -a --color"
+
+# general purpose
+alias cp="cp -iv"
+alias rm="rm -Iv"
+
+
+# utils
+alias mpv="~/scripts/mpvctl add"

@@ -1,0 +1,33 @@
+#!/usr/bin/bash
+
+# hotkey daemon
+sxhkd &
+feh --bg-fill ~/.config/bspwm/wallpaper.jpg
+
+source ~/.config/globals
+
+# set up workspaces
+bspc monitor -d $ws1 $ws2 $ws3 $ws4 $ws5 $ws6
+
+# global settings
+bspc config window_gap 0
+bspc config border_width 1
+bspc config split_ratio 0.5
+
+bspc config single_monocle true 
+bspc config borderless_monocle true 
+bspc config gapless_monocle true 
+bspc config normal_border_color "#000000"
+
+# window-specific rules
+bspc rule -a mpv desktop="$ws2" split_ratio=0.4 locked
+bspc rule -a chromium desktop="$ws3" locked
+bspc rule -a Chromium desktop="$ws3" locked
+bspc rule -a spotify desktop="$ws2" locked
+bspc rule -a gambatte_qt desktop="$ws5" locked
+bspc rule -a obs desktop="$ws4" locked
+
+# Kill lemonbar if it's already running, and then respawn it
+killall -I lemonbar
+~/.config/bspwm/panel | lemonbar -f "Terminus-8" -p -b | bash
+

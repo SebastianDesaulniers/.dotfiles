@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+readonly ws1="main"                                                        
+readonly ws2="code"
+readonly ws3="web"
+readonly ws4="media"
+readonly ws5="game"
+readonly ws6="misc"
+ 
+readonly workspaces=($ws1 $ws2 $ws3 $ws4 $ws5 $ws6)
+
+# Directories
+readonly c=~/.config
+readonly cbsp=~/.config
+

@@ -1,0 +1,6 @@
+# ignore errors
+-i
+--no-color
+
+-o ~/ntfs/videos/%(uploader)s/%(title)s.%(ext)s.
+--restrict-filenames
